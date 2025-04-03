@@ -1,5 +1,4 @@
 import { Customer } from "../models/customer.js";
-import bcrypt from "bcrypt";
 
 const addCustomer = async (req, res) => {
   try {
@@ -26,4 +25,20 @@ const addCustomer = async (req, res) => {
   }
 };
 
-export { addCustomer };
+const getAllCustomer = async (req, res) => {
+  try {
+    let customer = await Customer.find();
+    res.send({
+        success: true,
+        message: "All customers",
+        customer
+    })
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { addCustomer, getAllCustomer };
