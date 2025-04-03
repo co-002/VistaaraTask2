@@ -10,8 +10,9 @@ const customerSchema = new mongoose.Schema({
         required: true
     },
     accountNumber: {
-        type: String,
-        required: true
+        type: Number,
+        required: true,
+        unique: true
     }
 })
 
