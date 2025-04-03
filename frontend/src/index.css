@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-color: #242424;
+  color: aliceblue;
+}
+.custom-navbar{
+  background-color: #1a1a1a;
+  box-shadow: 0 1px 2px rgb(175, 175, 175);
+}
+.section-padding{
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
