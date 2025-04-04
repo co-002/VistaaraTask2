@@ -1,17 +1,45 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppState";
 
 function UserList() {
+  const { fetchCustomer, fetchFiveThousandProducts } = useContext(AppContext);
   const [activeRow, setActiveRow] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [belowFive, setBelowFive] = useState([]);
 
-  const handleToggle = (index) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allCustomer = await fetchCustomer();
+        setCustomers(allCustomer);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [fetchCustomer]);
+
+  const handleToggle = async (index) => {
     setActiveRow(activeRow === index ? null : index);
+    setBelowFive([]);
   };
 
-  const users = [
-    { id: 1, name: "Test User 1", address: "Address 1" },
-    { id: 2, name: "Test User 2", address: "Address 2" },
-    // Add more users as needed
-  ];
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const belowFiveThousand = async (accountNumber) => {
+    const allTransaction = await fetchFiveThousandProducts(accountNumber);
+    setBelowFive(allTransaction.transactions);
+  };
+
+  const distinctProduct = () => {
+
+  };
 
   return (
     <div className="container section-padding mt-5">
@@ -26,16 +54,16 @@ function UserList() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
-            <React.Fragment key={user.id}>
+          {customers?.map((customer, index) => (
+            <React.Fragment key={index}>
               <tr>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.address}</td>
+                <td>{index + 1}</td>
+                <td>{customer.name}</td>
+                <td>{customer.address}</td>
                 <td>
                   <button
                     className="btn btn-warning"
-                    onClick={() => handleToggle(index)}
+                    onClick={() => handleToggle(index, customer)}
                   >
                     Get Transaction
                   </button>
@@ -45,8 +73,33 @@ function UserList() {
                 <tr>
                   <td colSpan="4">
                     <div className="alert alert-info">
-                      {/* Replace this content with whatever you want */}
-                      Transaction details for
+                      <div className="d-flex ">
+                        <button
+                          className="btn btn-warning"
+                          onClick={() =>
+                            belowFiveThousand(customer.accountNumber)
+                          }
+                        >
+                          Transaction below 5000
+                        </button>
+                        <button
+                          className="btn btn-warning ms-5"
+                          onClick={() => distinctProduct()}
+                        >
+                          Trasaction distinct Products
+                        </button>
+                      </div>
+                      <div>
+                        {belowFive.length > 0 ? (
+                          belowFive.map((item, idx) => (
+                            <p key={idx}>
+                              Product Price: {item.purchasedProductName+" "+item.purchasedProductPrice}  
+                            </p>
+                          ))
+                        ) : (
+                          ""
+                        )}
+                      </div>
                     </div>
                   </td>
                 </tr>

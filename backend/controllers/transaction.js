@@ -8,7 +8,9 @@ const addTransaction = async (req, res) => {
       purchasedProductPrice,
       customerAccountNumber,
     } = req.body;
-    let customer = await Customer.findOne({ accountNumber: customerAccountNumber });
+    let customer = await Customer.findOne({
+      accountNumber: customerAccountNumber,
+    });
     if (!customer) {
       return res.send({
         success: true,
@@ -48,5 +50,30 @@ const getAllTransaction = async (req, res) => {
     });
   }
 };
+const getAllTransactionAboveOrEqualFiveThousand = async (req, res) => {
+  try {
+    let { customerAccountNumber } = req.params; 
+    customerAccountNumber = Number(customerAccountNumber);
+    const transactions = await Transaction.find({
+      purchasedProductPrice: { $gte: 5000 },
+      customerAccountNumber: customerAccountNumber
+    });
 
-export { addTransaction, getAllTransaction };
+    res.send({
+      success: true,
+      message: `Transactions for customer ${customerAccountNumber} with purchasedProductPrice >= 5000`,
+      transactions,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export {
+  addTransaction,
+  getAllTransaction,
+  getAllTransactionAboveOrEqualFiveThousand,
+};
