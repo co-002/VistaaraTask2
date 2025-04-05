@@ -118,7 +118,7 @@ function UserList() {
                         {whichBtnClicked == "distinctProduct" &&
                         belowFive.length > 0
                           ? belowFive.map((item, idx) => (
-                              <p key={idx}>{item}</p>
+                              <p key={idx} className="m-0">{item}</p>
                             ))
                           : ""}
                       </div>
