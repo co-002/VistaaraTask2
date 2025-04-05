@@ -2,11 +2,16 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppState";
 
 function UserList() {
-  const { fetchCustomer, fetchFiveThousandProducts } = useContext(AppContext);
+  const {
+    fetchCustomer,
+    fetchFiveThousandProducts,
+    fetchCustomerAllTransaction,
+  } = useContext(AppContext);
   const [activeRow, setActiveRow] = useState(null);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [belowFive, setBelowFive] = useState([]);
+  const [whichBtnClicked, setWhichBtnClicked] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,11 +39,18 @@ function UserList() {
 
   const belowFiveThousand = async (accountNumber) => {
     const allTransaction = await fetchFiveThousandProducts(accountNumber);
+    setWhichBtnClicked("five");
     setBelowFive(allTransaction.transactions);
   };
 
-  const distinctProduct = () => {
-
+  const distinctProduct = async (accountNumber) => {
+    const allTransaction = await fetchCustomerAllTransaction(accountNumber);
+    let products = allTransaction.transactions.map(
+      (transaction) => transaction.purchasedProductName
+    );
+    products = [...new Set(products)];
+    setWhichBtnClicked("distinctProduct");
+    setBelowFive(products);
   };
 
   return (
@@ -84,21 +96,31 @@ function UserList() {
                         </button>
                         <button
                           className="btn btn-warning ms-5"
-                          onClick={() => distinctProduct()}
+                          onClick={() =>
+                            distinctProduct(customer.accountNumber)
+                          }
                         >
                           Trasaction distinct Products
                         </button>
                       </div>
-                      <div>
-                        {belowFive.length > 0 ? (
-                          belowFive.map((item, idx) => (
-                            <p key={idx}>
-                              Product Price: {item.purchasedProductName+" "+item.purchasedProductPrice}  
-                            </p>
-                          ))
-                        ) : (
-                          ""
-                        )}
+                      <div className="mt-2">
+                        {belowFive.length > 0 && whichBtnClicked == "five"
+                          ? belowFive.map((item, idx) => (
+                              <p key={idx} className="m-0">
+                                Product:{" "}
+                                {item.purchasedProductName +
+                                  ", Price: " +
+                                  item.purchasedProductPrice}
+                              </p>
+                            ))
+                          : ""}
+
+                        {whichBtnClicked == "distinctProduct" &&
+                        belowFive.length > 0
+                          ? belowFive.map((item, idx) => (
+                              <p key={idx}>{item}</p>
+                            ))
+                          : ""}
                       </div>
                     </div>
                   </td>
