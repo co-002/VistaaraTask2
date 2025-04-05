@@ -52,6 +52,11 @@ function UserList() {
     setWhichBtnClicked("distinctProduct");
     setBelowFive(products);
   };
+  const allTransaction = async (accountNumber) => {
+    const allTransaction = await fetchCustomerAllTransaction(accountNumber);
+    setWhichBtnClicked("allTransaction");
+    setBelowFive(allTransaction.transactions);
+  };
 
   return (
     <div className="container section-padding mt-5">
@@ -102,6 +107,12 @@ function UserList() {
                         >
                           Trasaction distinct Products
                         </button>
+                        <button
+                          className="btn btn-warning ms-5"
+                          onClick={() => allTransaction(customer.accountNumber)}
+                        >
+                          All Transaction
+                        </button>
                       </div>
                       <div className="mt-2">
                         {belowFive.length > 0 && whichBtnClicked == "five"
@@ -118,7 +129,20 @@ function UserList() {
                         {whichBtnClicked == "distinctProduct" &&
                         belowFive.length > 0
                           ? belowFive.map((item, idx) => (
-                              <p key={idx} className="m-0">{item}</p>
+                              <p key={idx} className="m-0">
+                                {item}
+                              </p>
+                            ))
+                          : ""}
+                        {belowFive.length > 0 &&
+                        whichBtnClicked == "allTransaction"
+                          ? belowFive.map((item, idx) => (
+                              <p key={idx} className="m-0">
+                                Product:{" "}
+                                {item.purchasedProductName +
+                                  ", Price: " +
+                                  item.purchasedProductPrice}
+                              </p>
                             ))
                           : ""}
                       </div>
