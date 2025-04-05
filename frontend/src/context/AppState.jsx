@@ -4,7 +4,7 @@ import axios from "axios";
 const AppContext = createContext();
 
 const AppState = ({ children }) => {
-  const url = "http://localhost:3000/api";
+  const url = "https://vistaaratask2-backend.onrender.com/api";
 
   const fetchCustomerTransaction = async () => {
     const response = await axios.get(`${url}/transaction`, {
